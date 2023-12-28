@@ -28,16 +28,16 @@ bool Parser::is_op(TokenKind op) {
 	return ADD <= op && op <= RPAREN;
 }
 
-double Parser::pratt(std::deque<Token> *tokens, unsigned int min_bp) {
+double Parser::pratt(std::deque<Token> &tokens, unsigned int min_bp) {
 	double lhs;
-	Token tok_lhs = tokens->front();
-	tokens->pop_front();
+	Token tok_lhs = tokens.front();
+	tokens.pop_front();
 	if(is_op(tok_lhs.kind)) {
 		switch(tok_lhs.kind) {
 			case LPAREN:
 				lhs = pratt(tokens, 0);
-				if(tokens->front().kind != RPAREN) throw std::logic_error(std::string("unbalanced parentheses"));
-				tokens->pop_front();
+				if(tokens.front().kind != RPAREN) throw std::logic_error(std::string("unbalanced parentheses"));
+				tokens.pop_front();
 				break;
 			case ADD: // ADD or SUB
 				lhs = pratt(tokens, prefix_bp(tok_lhs.kind).r_bp);
@@ -53,7 +53,7 @@ double Parser::pratt(std::deque<Token> *tokens, unsigned int min_bp) {
 	}
 
 	while(true) {
-		Token op = tokens->front();
+		Token op = tokens.front();
 		if(!is_op(op.kind)) {
 			if(op.kind == END) break;
 			throw std::logic_error(std::string("operand found instead of operator"));
@@ -63,7 +63,7 @@ double Parser::pratt(std::deque<Token> *tokens, unsigned int min_bp) {
 		if(bp.some) {
 			if(bp.l_bp < min_bp) break;
 
-			tokens->pop_front();
+			tokens.pop_front();
 
 			double rhs = pratt(tokens, bp.r_bp);
 			switch(op.kind) {
@@ -83,5 +83,5 @@ double Parser::pratt(std::deque<Token> *tokens, unsigned int min_bp) {
 
 double Parser::parse(std::string input) {
 	std::deque<Token> tokens = Lexer::parse(input);
-	return pratt(&tokens, 0);
+	return pratt(tokens, 0);
 }
