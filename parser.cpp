@@ -1,8 +1,10 @@
+#include <string>
+#include <deque>
 #include <stdexcept>
 
-#include "parser.h"
 #include "lexer.h"
 #include "token.h"
+#include "parser.h"
 
 BindingPower Parser::infix_bp(TokenKind op) {
 	switch(op) {
@@ -39,7 +41,7 @@ double Parser::pratt(std::deque<Token> &tokens, unsigned int min_bp) {
 				if(tokens.front().kind != RPAREN) throw std::logic_error(std::string("unbalanced parentheses"));
 				tokens.pop_front();
 				break;
-			case ADD: // ADD or SUB
+			case ADD:
 				lhs = pratt(tokens, prefix_bp(tok_lhs.kind).r_bp);
 				break;
 			case SUB:

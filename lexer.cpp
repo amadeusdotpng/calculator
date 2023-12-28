@@ -1,7 +1,8 @@
-#include "lexer.h"
-#include "token.h"
 #include <cctype>
 #include <stdexcept>
+
+#include "token.h"
+#include "lexer.h"
 
 bool Lexer::str_isnum(std::string S) {
 	for(char c : S) {
